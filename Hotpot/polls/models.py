@@ -21,3 +21,12 @@ class Choice(models.Model):
     votes = models.IntegerField(default=0)
     def __str__(self):
         return self.choice_text
+    def get_votes(self):
+        return self.votes
+    def add_vote(self):
+        self.votes += 1
+    def delete_vote(self):
+        self.votes -= 1
+        
+
+
