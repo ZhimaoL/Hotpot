@@ -1,14 +1,23 @@
-from fabric.api import local
+
+from __future__ import with_statement
+from fabric.api import local, settings, abort
+from fabric.contrib.console import confirm
 
 
 def test():
-    local("python manage.py test polls")
+    with settings(warn_only=True):
+        result = local('python manage.py test polls', capture=True)
+    if result.failed and not confirm("Tests failed. Continue anyway?"):
+        abort("Aborting at user request.")
+    
 
 
 def commit():
+    test()
     local("git add -p && git commit")
 
 def push():
+    test()
     local("git push -u origin master")
 
 def prepare_deploy():
@@ -17,6 +26,7 @@ def prepare_deploy():
     push()
 
 def deploy():
-     local("python manage.py runserver")
+    test()
+    local("python manage.py runserver")
 
 
